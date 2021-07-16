@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox alignment="BOTTOM_CENTER" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button fx:id="buttonPlayID" mnemonicParsing="false" onAction="#playButtonAction" text="Play" />
+      <Button fx:id="buttonMuteId" mnemonicParsing="false" onAction="#muteButtonAction" text="Mute" />
+   </children>
+</VBox>
