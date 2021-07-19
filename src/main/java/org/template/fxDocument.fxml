@@ -8,5 +8,6 @@
    <children>
       <Button fx:id="buttonPlayID" mnemonicParsing="false" onAction="#playButtonAction" text="Play" />
       <Button fx:id="buttonMuteId" mnemonicParsing="false" onAction="#muteButtonAction" text="Mute" />
+      <Button fx:id="buttonUnmuteId" mnemonicParsing="false" onAction="#unmuteButtonAction" text="Unmute" />
    </children>
 </VBox>

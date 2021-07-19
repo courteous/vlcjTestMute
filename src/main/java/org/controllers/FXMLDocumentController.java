@@ -3,6 +3,7 @@ package org.controllers;
 
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -10,43 +11,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.base.AudioApi;
+import uk.co.caprica.vlcj.player.base.MediaApi;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
-import uk.co.caprica.vlcj.player.base.events.MediaPlayerEvent;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-
-
-
-
-
-final class MediaPlayerMutedEvent extends MediaPlayerEvent {
-
-    MediaPlayerMutedEvent(MediaPlayer mediaPlayer) {
-        super(mediaPlayer);
-    }
-
-    @Override
-    public void notify(MediaPlayerEventListener listener) {
-        listener.muted(mediaPlayer, true);
-    }
-
-}
-
-
-
-final class MediaPlayerUnMutedEvent extends MediaPlayerEvent {
-
-	MediaPlayerUnMutedEvent(MediaPlayer mediaPlayer) {
-        super(mediaPlayer);
-    }
-
-    @Override
-    public void notify(MediaPlayerEventListener listener) {
-        listener.muted(mediaPlayer, false);
-    }
-
-}
 
 
 public class FXMLDocumentController implements Initializable {
@@ -59,9 +28,11 @@ public class FXMLDocumentController implements Initializable {
 	private Button buttonMuteId;
     
 	
-	
+	@FXML
+	private Button buttonUnmuteId;
+    	
     
-    
+	MediaPlayerFactory mediaPlayerFactory;
     private EmbeddedMediaPlayer embeddedMediaPlayer;
     private MediaPlayerEventAdapter embeddedMediaPlayerAdapter;
        
@@ -69,26 +40,11 @@ public class FXMLDocumentController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	
-		
-	}
- 
-    
-	
-	@FXML
-	private void playButtonAction(ActionEvent event) {
-
-		
-		System.out.println("Start playing some stuff ..");
+		this.mediaPlayerFactory = new MediaPlayerFactory();
+		this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 		
 		
-		String file = "file:///C:/Users/courteous/Downloads/sound.wav";
 		
-		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory("-vvv");
-		EmbeddedMediaPlayer embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
-		
-		uk.co.caprica.vlcj.player.base.MediaApi mediaApi = embeddedMediaPlayer.media();
-		
-
 		this.embeddedMediaPlayerAdapter = new MediaPlayerEventAdapter() {
 
             
@@ -111,34 +67,42 @@ public class FXMLDocumentController implements Initializable {
     
 		
 		embeddedMediaPlayer.events().addMediaPlayerEventListener(embeddedMediaPlayerAdapter);
+		
+	}
+ 
+    
+	
+	@FXML
+	private void playButtonAction(ActionEvent event) {
 
-		
-		
-		
-		Boolean prepared = mediaApi.prepare(file);
-		System.out.println("Is correctly prepared " + prepared);
-		Boolean isPlaying  = mediaApi.play(file);
-		System.out.println("Is playing  " + isPlaying);
-		
-		if (isPlaying) {
-			
-			uk.co.caprica.vlcj.player.base.EventApi eventApi = embeddedMediaPlayer.events();
-			
-		}
-		
-		boolean isPlayingClip = embeddedMediaPlayer.status().isPlaying();
-		if (isPlayingClip) {
+        MediaApi mediaApi =  this.embeddedMediaPlayer.media();
+        String sourceOfMedia = "dshow://" ;
+	    
+	    String cameraDevice = "Logitech Webcam C930e";
+	    String microfonDevice = "Mikrofon (2- Logitech Webcam C930e)";
+	   
+	   
+	    String[] options = { 	
+	    						
+	    						":dshow-vdev=" + cameraDevice,  
+	    						":dshow-adev=" + microfonDevice, 
+	    						
+	    						":sout=#duplicate{"
+    							+ "dst=display"
+	    						+ "}' "
+	    						
 
-			
-			
+	    						
+	    						};
+	  	    
+		Boolean prepared = mediaApi.prepare(sourceOfMedia);
+		System.out.println("Is prepared " + prepared);
 
-
-			
-		}
-
+		Boolean isPlaying = mediaApi.play(sourceOfMedia, options);
 		
+		System.out.println("Is audio playing  " + isPlaying);	
+	    System.out.println(Arrays.toString(options) );
 		
-        System.out.println("end");
 		
 	}
     
@@ -147,18 +111,30 @@ public class FXMLDocumentController implements Initializable {
 	@FXML
 	private void muteButtonAction(ActionEvent event) {
 		try {
-		
-			MediaPlayerMutedEvent mutedEvent = new MediaPlayerMutedEvent(embeddedMediaPlayer);
-			mutedEvent.notify(this.embeddedMediaPlayerAdapter);
-			Thread.sleep(3000);
-			MediaPlayerUnMutedEvent unMutedEvent = new MediaPlayerUnMutedEvent(embeddedMediaPlayer);
-			unMutedEvent.notify(this.embeddedMediaPlayerAdapter);
-
+			
+			AudioApi audioApi = this.embeddedMediaPlayer.audio();
+			audioApi.setMute(true);
+			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 	}
     
 
+	
+	
+	@FXML
+	private void unmuteButtonAction(ActionEvent event) {
+		try {
+			
+			AudioApi audioApi = this.embeddedMediaPlayer.audio();
+			audioApi.setMute(false);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }
