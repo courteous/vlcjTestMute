@@ -87,9 +87,14 @@ public class FXMLDocumentController implements Initializable {
 	    						":dshow-vdev=" + cameraDevice,  
 	    						":dshow-adev=" + microfonDevice, 
 	    						
-	    						":sout=#duplicate{"
-    							+ "dst=display"
-	    						+ "}' "
+	    						" :sout=#transcode{vcodec=h264,fps=24vb=750,scale=Auto,width=640,height=360,acodec=mp4a,ab=128,channels=2,samplerate=44100,threads=4,scodec=none}"
+	    						// start duplicating the streams i.e. send it over the network and display it locally 
+	    						+ ":duplicate{"
+	    						+ "dst=standard{access=udp,mux=ts,"
+	    						+ "dst=172.26.15.107:5555"
+	    						+ "},"
+	    						+ "dst=display"
+	    						+ "} "
 	    						
 
 	    						
@@ -97,6 +102,7 @@ public class FXMLDocumentController implements Initializable {
 	  	    
 		Boolean prepared = mediaApi.prepare(sourceOfMedia);
 		System.out.println("Is prepared " + prepared);
+		
 
 		Boolean isPlaying = mediaApi.play(sourceOfMedia, options);
 		
