@@ -84,17 +84,15 @@ public class FXMLDocumentController implements Initializable {
 	   
 	    String[] options = { 	
 	    						
-	    						":dshow-vdev=" + cameraDevice,  
-	    						":dshow-adev=" + microfonDevice, 
-	    						
-	    						" :sout=#transcode{vcodec=h264,fps=24vb=750,scale=Auto,width=640,height=360,acodec=mp4a,ab=128,channels=2,samplerate=44100,threads=4,scodec=none}"
+//	    						" :dshow-vdev=" + cameraDevice,    
+//	    						" :dshow-adev=" + microfonDevice,  
+//	    						" :sout=#transcode{vcodec=h264,fps=24,vb=750,scale=Auto,width=640,height=360,acodec=mp4a,ab=128,channels=2,samplerate=44100,threads=4,scodec=none}"
+	    						" sout=#transcode{vcodec=h264,scale=Auto,acodec=mp4a,ab=128,channels=2,samplerate=44100}"
 	    						// start duplicating the streams i.e. send it over the network and display it locally 
 	    						+ ":duplicate{"
-	    						+ "dst=standard{access=udp,mux=ts,"
-	    						+ "dst=172.26.15.107:5555"
-	    						+ "},"
+	    						+ "dst=standard{access=udp,mux=ts,dst=172.26.15.107:5555},"
 	    						+ "dst=display"
-	    						+ "} "
+	    						+ "}"
 	    						
 
 	    						
