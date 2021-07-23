@@ -40,7 +40,7 @@ public class FXMLDocumentController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	
-		this.mediaPlayerFactory = new MediaPlayerFactory();
+		this.mediaPlayerFactory = new MediaPlayerFactory("-vvv");
 		this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 		
 		
@@ -51,7 +51,7 @@ public class FXMLDocumentController implements Initializable {
             @Override
             public void muted(MediaPlayer mediaPlayerObj, boolean muted) {
             	System.out.println("Muted event called ." + muted);
-            	mediaPlayerObj.audio().setMute(muted);
+//            	mediaPlayerObj.audio().setMute(muted);
             	
             }
             
@@ -81,28 +81,24 @@ public class FXMLDocumentController implements Initializable {
 	    String cameraDevice = "Logitech Webcam C930e";
 	    String microfonDevice = "Mikrofon (2- Logitech Webcam C930e)";
 	   
-	   
 	    String[] options = { 	
 	    						
-//	    						" :dshow-vdev=" + cameraDevice,    
-//	    						" :dshow-adev=" + microfonDevice,  
-//	    						" :sout=#transcode{vcodec=h264,fps=24,vb=750,scale=Auto,width=640,height=360,acodec=mp4a,ab=128,channels=2,samplerate=44100,threads=4,scodec=none}"
-	    						" sout=#transcode{vcodec=h264,scale=Auto,acodec=mp4a,ab=128,channels=2,samplerate=44100}"
-	    						// start duplicating the streams i.e. send it over the network and display it locally 
+	    						":dshow-vdev=" + cameraDevice,    
+	    						":dshow-adev=" + microfonDevice,  
+	    						":sout=#transcode{vcodec=h264,fps=24,vb=750,scale=Auto,width=640,height=360,acodec=mp4a,ab=128,channels=2,samplerate=44100,threads=8,scodec=none}"
 	    						+ ":duplicate{"
 	    						+ "dst=standard{access=udp,mux=ts,dst=172.26.15.107:5555},"
 	    						+ "dst=display"
 	    						+ "}"
 	    						
-
-	    						
 	    						};
 	  	    
-		Boolean prepared = mediaApi.prepare(sourceOfMedia);
+		Boolean prepared = mediaApi.prepare(sourceOfMedia, options);
 		System.out.println("Is prepared " + prepared);
 		
 
-		Boolean isPlaying = mediaApi.play(sourceOfMedia, options);
+		embeddedMediaPlayer.controls().play();
+		Boolean isPlaying  = this.embeddedMediaPlayer.status().isPlaying();
 		
 		System.out.println("Is audio playing  " + isPlaying);	
 	    System.out.println(Arrays.toString(options) );
